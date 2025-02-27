@@ -118,11 +118,10 @@ class EventController extends AbstractController
     }
 
     #[Route('/{eventUid}', name: 'app_event_show')]
-    public function show(EventRepository $eventRepository, ChatMessageRepository $chatMessageRepository, string $eventUid, SessionInterface $sessionInterface, NewApiService $newApi): Response
+    public function show(ChatMessageRepository $chatMessageRepository, string $eventUid, SessionInterface $sessionInterface, NewApiService $newApi): Response
     {
 
         $event = $newApi->getDataById($eventUid);
-        
         if (!$event) {
         return $this->render('event/error.html.twig', [], new Response('', 404));
     }
@@ -148,21 +147,13 @@ class EventController extends AbstractController
     {
 
         $emailSession = $session->get('email');
+        // $userId = $session->getId();
+
         $authenticatedUser = $userRepository->findOneBy(['email' => $emailSession]);
-
-        $event = $newApi->getDataById($eventUid);
-
-        if (!$event) {
-            throw $this->createNotFoundException('Aucun évènement trouvé.');
-        }
-
-        // dump($eventUid);
-        // dump($event);
+        // $authenticatedUser = $userRepository->findOneBy(['id' => $userId]);
 
         // Récupère le contenu du message
         $messageContent = $request->request->get('content');
-
-        // dump($messageContent);
 
         if ($messageContent === null) {
             $messageContent = ''; 
@@ -171,8 +162,6 @@ class EventController extends AbstractController
         // Récupérer l'ID du message parent (s'il y en a un)
         $parentMessageId = $request->request->get('parentMessageId');
 
-        // dump($parentMessageId);
-        
         // Si un parentMessageId est fourni, recherche le message parent associé
         $parentMessage = null;
         if ($parentMessageId) {

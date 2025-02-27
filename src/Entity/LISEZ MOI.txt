@@ -1,0 +1,1 @@
+Le dossier "Entity" est obligatoire pour composer update --ignore-platform-req=ext-mongodb autrement ça provoquera une erreur. Les "entités" (documents) sont dans le dossier src/Document

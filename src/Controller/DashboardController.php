@@ -23,14 +23,14 @@ class DashboardController extends AbstractController
         $user = $userRepository->findOneBy(['email' => $email]);
 
         // Récupérer les tags de l'utilisateur
-        $tagsByCategory = $user->getTagsByCategory();
+        // $tagsByCategory = $user->getTagsByCategory();
 
         // Reformater les données pour organiser les tags par catégorie
         $tagsGroupedByCategory = [];
 
-        foreach ($tagsByCategory as $tag) {
-            $tagsGroupedByCategory[] = $tag; // Utilise $tag à la fois comme clé et valeur
-        }
+        // foreach ($tagsByCategory as $tag) {
+        //     $tagsGroupedByCategory[] = $tag; // Utilise $tag à la fois comme clé et valeur
+        // }
 
         // On charge les données de l'API 
         $apiDatas = $api->getDatas();
@@ -73,7 +73,7 @@ class DashboardController extends AbstractController
         // Récupérer l'utilisateur depuis la base de données en utilisant l'email
         $user = $userRepo->findOneBy(['email' => $email]);
         
-        $tagsByCategory = $user->getTagsByCategory();
+        // $tagsByCategory = $user->getTagsByCategory();
 
         // Passez les données à votre modèle Twig et générez la vue
         return $this->render('dashboard/mestags.html.twig', [
