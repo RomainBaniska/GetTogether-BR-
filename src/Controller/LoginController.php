@@ -20,10 +20,9 @@ use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationExc
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 
-#[Route('/login')]
 class LoginController extends AbstractController
 {
-    #[Route('/', name: 'app_login')]
+    #[Route('/login', name: 'app_login')]
     public function login(Request $request, ManagerRegistry $managerRegistry, AuthenticationUtils $authenticationUtils, UserRepository $userRepository, SessionInterface $sessionInterface): Response
     {
         // Récupère les erreurs d'authentification
@@ -35,7 +34,6 @@ class LoginController extends AbstractController
         $user = new Users();
         // Pré-remplit le champ d'e-mail avec le dernier nom d'utilisateur utilisé
         $user->setEmail($lastUsername);
-        // dump($user);
         // Crée le formulaire de connexion en utilisant LoginFormType et l'entité Users
         $form = $this->createForm(LoginFormType::class, $user);
 

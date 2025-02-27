@@ -26,30 +26,26 @@ class RegistrationController extends AbstractController
         // Gère la soumission du formulaire
         $form->handleRequest($request);
 
-        // if ($form->isSubmitted()) {
-            
-        // }
-
         // Vérifie si le formulaire a été soumis et s'il est valide
         if ($form->isSubmitted() && $form->isValid()) {
             $email = $user->getEmail();
 
             
-            // Vérifier si l'adresse e-mail existe déjà dans la base de données
-            $existingUser = $userRepository->findOneBy(['email' => $email]);
-            if ($existingUser) {
-                // Si un utilisateur avec l'e-mail existe déjà, afficher une modal d'erreur
-                $response = $this->render('registration/error.html.twig', [
-                    'message2' => 'Un compte existe déjà avec cette adresse e-mail.',
-                ]);
-                
-                $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
-                return $response;
-            }
+        // Vérifier si l'adresse e-mail existe déjà dans la base de données
+        $existingUser = $userRepository->findOneBy(['email' => $email]);
+        if ($existingUser) {
+            // Si un utilisateur avec l'e-mail existe déjà, afficher une modal d'erreur
+            $response = $this->render('registration/error.html.twig', [
+                'messageError' => 'Un compte existe déjà avec cette adresse e-mail.',
+            ]);
+            
+            $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
+            return $response;
+        }
 
-            // L'e-mail est unique, nous pouvons continuer avec l'enregistrement de l'utilisateur
+            // Si l'Email n'existe pas déjà :
 
-            // Hashe le mot de passe de l'utilisateur en utilisant l'objet UserPasswordHasherInterface
+            // Hashe le MDP
             $hashedPassword = $userPasswordHasher->hashPassword($user, $user->getPassword());
             // Défini le mot de passe hashé dans l'objet Users
             $user->setPassword($hashedPassword);
@@ -59,7 +55,7 @@ class RegistrationController extends AbstractController
 
             // Affiche la modal de succès
             return $this->render('registration/success.html.twig', [
-                'message' => 'Votre compte a été créé.',
+                'messageSuccess' => 'Votre compte a été créé.',
             ]);
         }
 

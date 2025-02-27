@@ -22,6 +22,8 @@ class DashboardController extends AbstractController
         $email = $sessionInterface->get('email');
         $user = $userRepository->findOneBy(['email' => $email]);
 
+        dump($user);
+
         // Récupérer les tags de l'utilisateur
         // $tagsByCategory = $user->getTagsByCategory();
 
@@ -56,6 +58,7 @@ class DashboardController extends AbstractController
 
         return $this->render('dashboard/index.html.twig', [
             'tagsByCategory' => $tagsGroupedByCategory,
+            'pseudo' => $user,
             'user' => $user,
             'events' => $apiDatas,
             'datas' => $calendarDatas,

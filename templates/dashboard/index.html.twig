@@ -13,7 +13,7 @@
 			<nav class="navbar navbar-expand-lg bg-body-tertiary navbar-dark">
 				<div class="container-fluid">
 
-					<a href="#"><img class="logo" src="assets/img/logowhite.png" alt="Logo gettogether"></a>
+					<a href="{{ path('app_dashboard') }}"><img class="logo" src="assets/img/logowhite.png" alt="Logo gettogether"></a>
 
 					<!-- searchbar -->
 					<form class="d-flex" role="search" id="searchbarheader">
@@ -35,7 +35,7 @@
 								<a class="nav-link notif" href="#">Notifcations</a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-link user">Profil</a>
+								<a href="{{ path('app_logout') }}" class="nav-link user">Profil</a>
 							</li>
 						</ul>
 

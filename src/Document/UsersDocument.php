@@ -5,7 +5,7 @@ namespace App\Document;
 use DateTimeInterface;
 // use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
-// use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[MongoDB\Document]
@@ -26,7 +26,12 @@ class Users implements PasswordAuthenticatedUserInterface
     #[MongoDB\Field(type: 'date')]
     private ?DateTimeInterface $dateNaissance;
 
+    // #[MongoDB\Field(type: 'string')]
+    // public string $email;
+
     #[MongoDB\Field(type: 'string')]
+    #[Assert\NotBlank(message: "L'email est obligatoire.")]
+    #[Assert\Email(message: "Veuillez entrer un email valide.")]
     public string $email;
 
     #[MongoDB\Field(type: 'string')]

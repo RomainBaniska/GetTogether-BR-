@@ -36,15 +36,17 @@ class RegistrationFormType extends AbstractType
 
             // Ajoute le champ 'password' de type RepeatedType pour la saisie du mot de passe et sa confirmation
             ->add('password', RepeatedType::class, [
-                'attr' => [
-                    'placeholder' => 'Mot de passe'
-                ],
                 'type' => PasswordType::class,
-
                 'invalid_message' => 'Les mots de passe doivent correspondre.',
                 'required' => true,
-                'first_options' => ['label' => 'Mot de passe'],
-                'second_options' => ['label' => 'Confirmer votre mot de passe'],
+                'first_options' => [
+                    'label' => 'Mot de passe',
+                    // 'attr' => ['placeholder' => 'Mot de passe']
+                ],
+                'second_options' => [
+                    'label' => 'Confirmer votre mot de passe',
+                    // 'attr' => ['placeholder' => 'Confirmez votre mot de passe']
+                ],
             ])
 
             // Ajoute le champ 'CGU' de type CheckboxType pour accepter les CGU
@@ -57,7 +59,6 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
                 'label' => 'J\'accepte les CGU',
-
             ])
 
             // Ajoute le bouton de soumission du formulaire
