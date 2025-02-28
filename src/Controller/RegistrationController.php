@@ -16,50 +16,56 @@ class RegistrationController extends AbstractController
     #[Route('/registration', name: 'app_registration')]
     public function register(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher): Response
     {
+        // On initialise le message
         $message = '';
         // Créer une nouvelle instance de l'entité Users
         $user = new Users();
-
         // Créer le formulaire d'inscription en utilisant RegistrationFormType et l'entité Users
         $form = $this->createForm(RegistrationFormType::class, $user);
-
         // Gère la soumission du formulaire
         $form->handleRequest($request);
 
-        // Vérifie si le formulaire a été soumis et s'il est valide
+        // Si le formulaire est soumis et valide
         if ($form->isSubmitted() && $form->isValid()) {
-            $email = $user->getEmail();
+                $email = $user->getEmail();
+                // Avant d'enregistrer l'utilisateur, on cherche l'email dans la BDD
+                $mailAlreadyExist = $userRepository->findOneBy(['email' => $email]);
+                // Si un utilisateur avec l'e-mail existe déjà, afficher une modal d'erreur
+                if ($mailAlreadyExist) {
+                    $response = $this->render('registration/error.html.twig', [
+                        'messageError' => 'Un compte existe déjà avec cette adresse e-mail.',
+                    ]);
+                    $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
+                    return $response;
+                }
 
-            
-        // Vérifier si l'adresse e-mail existe déjà dans la base de données
-        $existingUser = $userRepository->findOneBy(['email' => $email]);
-        if ($existingUser) {
-            // Si un utilisateur avec l'e-mail existe déjà, afficher une modal d'erreur
-            $response = $this->render('registration/error.html.twig', [
-                'messageError' => 'Un compte existe déjà avec cette adresse e-mail.',
-            ]);
-            
-            $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
-            return $response;
-        }
+                // Si l'Email n'existe pas encore en BDD, alors on vérifie que les autres champs sont OK
+                // $password = $user->getPassword();
+                // $passwordConfirmation = $user->getPasswordConfirmation();
+                // // On s'assure que la confirmation du MDP = le MDP
+                // if (!($password === $passwordConfirmation)) {
+                //     $response = $this->render('registration/error.html.twig', [
+                //         'messageError' => 'Les mots de passe ne correspondent pas',
+                //     ]);
+                //     $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
+                //     return $response;
+                // }
 
-            // Si l'Email n'existe pas déjà :
+                // Hashe le MDP
+                $hashedPassword = $userPasswordHasher->hashPassword($user, $user->getPassword());
+                // Défini le mot de passe hashé dans l'objet Users
+                $user->setPassword($hashedPassword);
 
-            // Hashe le MDP
-            $hashedPassword = $userPasswordHasher->hashPassword($user, $user->getPassword());
-            // Défini le mot de passe hashé dans l'objet Users
-            $user->setPassword($hashedPassword);
+                // Enregistre l'utilisateur dans la base de données en utilisant la fonction save dans le UserRepository
+                $userRepository->save($user);
 
-            // Enregistre l'utilisateur dans la base de données en utilisant la fonction save dans le UserRepository
-            $userRepository->save($user);
+                // Affiche la modal de succès
+                return $this->render('registration/success.html.twig', [
+                    'messageSuccess' => 'Votre compte a été créé.',
+                ]);
+                }
 
-            // Affiche la modal de succès
-            return $this->render('registration/success.html.twig', [
-                'messageSuccess' => 'Votre compte a été créé.',
-            ]);
-        }
-
-        // Affiche le formulaire d'inscription à la vue Twig
+        // Affiche le formulaire d'inscription à la vue Twig si le formulaire n'est pas soumis
         return $this->render('registration/index.html.twig', [
             'message' => $message,
             'registrationForm' => $form->createView(),

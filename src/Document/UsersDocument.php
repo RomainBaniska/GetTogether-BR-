@@ -96,7 +96,7 @@ class Users implements PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    public function getPasswordConfirmation(): ?string
+    public function getPasswordConfirmation(): string
     {
         return $this->passwordConfirmation;
     }

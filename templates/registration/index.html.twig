@@ -70,14 +70,19 @@
 											<a href="">Lire la CGU</a>
 										</div>
 									</div>
+									{# Bouton "Submit" avec la classe registration ciblée par l'événement de modals.js#}
+									{# En remontant jusque dans le registrationForm, on a "->add('submit', SubmitType::class" #}
 									{{ form_row(registrationForm.submit) }}
+
 									{{ form_end(registrationForm) }}
 
 								</div>
 
 							</div>
 
-
+{# <div id="error-message">
+    {{ messageError }}
+</div> #}
 							<!-- </div> -->
 
 
