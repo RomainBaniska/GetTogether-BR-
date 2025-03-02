@@ -20,9 +20,9 @@ document.addEventListener('DOMContentLoaded', (e) => {
             // On construit dynamiquement un nom d'un élément caché (input hidden) qui prend le nom du formulaire et lui rajoute '_destination'
             const hiddenElementName = e.target.form.name + '_destination';
             // En l'occurence pour la route registration, le nom sera "registration_form_destination"
-            console.log(hiddenElementName);
+            // console.log(hiddenElementName);
             const url = document.getElementById(hiddenElementName).value;
-            console.log(url); // en l'occurence "/registration"
+            // console.log(url); // en l'occurence "/registration"
 ;
             // Envoyer les données du formulaire au serveur -> En gros renvoyer à "registration"
             fetch(url, {
@@ -50,8 +50,8 @@ document.addEventListener('DOMContentLoaded', (e) => {
             })
             .then(html => {
                 // if (!(pw1 === pw2)) {
-                console.log(pw1.value);
-                console.log(pw2.value);
+                // console.log(pw1.value);
+                // console.log(pw2.value);
                 if (pw1.value !== pw2.value) {
                     let btn = document.querySelector('#modal .modal-footer button');
                     btn.style.visibility = "hidden";
