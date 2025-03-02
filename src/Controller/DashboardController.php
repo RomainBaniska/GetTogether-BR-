@@ -22,7 +22,7 @@ class DashboardController extends AbstractController
         $email = $sessionInterface->get('email');
         $user = $userRepository->findOneBy(['email' => $email]);
 
-        dump($user);
+        // dump($user);
 
         // Récupérer les tags de l'utilisateur
         // $tagsByCategory = $user->getTagsByCategory();

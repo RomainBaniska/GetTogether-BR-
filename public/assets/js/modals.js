@@ -2,12 +2,17 @@ document.addEventListener('DOMContentLoaded', (e) => {
 
     //@todo : Ajouter une classe pour de cibler que les formulaire devant lancer des modals
     const elements = document.querySelectorAll('form button.registration[type="submit"]');
+    const pw1 = document.getElementById('registration_form_password_first');
+    const pw2 = document.getElementById('registration_form_password_second');
 
     elements.forEach(function(element){
+        // if (pw1 === pw2) {
         element.addEventListener('click', (e) => {
 
             // annule le comportement normal du bouton
             e.preventDefault();
+
+            console.log("yay");
 
             // On récupère toutes les données du formulaire
             const formData = new FormData(e.target.form);
@@ -29,6 +34,7 @@ document.addEventListener('DOMContentLoaded', (e) => {
                 if (response.status == 200) {
                     // On sélectionne le bouton de la modal et on change son style, son comportement et ce qu'il y est écrit
                     let btn = document.querySelector('#modal .modal-footer button');
+                    btn.style.visibility = "visible";
                     btn.classList.remove('btn-secondary');
                     btn.classList.add('btn-primary');
                     btn.innerHTML = 'Me connecter';
@@ -43,10 +49,17 @@ document.addEventListener('DOMContentLoaded', (e) => {
                 }
             })
             .then(html => {
+                // if (!(pw1 === pw2)) {
+                console.log(pw1.value);
+                console.log(pw2.value);
+                if (pw1.value !== pw2.value) {
+                    let btn = document.querySelector('#modal .modal-footer button');
+                    btn.style.visibility = "hidden";
+                    document.querySelector('#modal .modal-body').innerHTML = "les passwords ne correspondent pas";
+                } else {
                 document.querySelector('#modal .modal-body').innerHTML = html;
-
-                // document.querySelector('#modal .modal-body').innerHTML = 
-                // new DOMParser().parseFromString(html, 'text/html').querySelector('#error-message').innerHTML;
+                }
+            
 
 
                 const myModal = new bootstrap.Modal('#modal', {keyboard: false})
@@ -54,29 +67,12 @@ document.addEventListener('DOMContentLoaded', (e) => {
 
                 // TODO => ici
 
-                // // Création d'un DOM temporaire pour analyser la réponse HTML
-                // const tempDiv = document.createElement('div');
-                // tempDiv.innerHTML = html;
- 
-                // // Recherche des erreurs dans la réponse
-                // const errors = tempDiv.querySelector('.form-error-message, .invalid-feedback');
- 
-                // if (errors) {
-                //      // Affiche seulement les erreurs dans la modal
-                //      document.querySelector('#modal .modal-body').innerHTML = errors.outerHTML;
-                // } else {
-                //      // Sinon, affiche tout le contenu dans la modal
-                //      document.querySelector('#modal .modal-body').innerHTML = html;
-                // }
- 
-                // // Affichage de la modal
-                // const myModal = new bootstrap.Modal('#modal', {keyboard: false});
-                // myModal.show();
             })
             .catch(error => {
                 console.error('Une erreur s\'est produite lors de la validation :', error);
             });            
         });
+    // }// Fin condition pw1 === pw2
     });
 
 });

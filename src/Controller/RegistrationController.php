@@ -39,18 +39,6 @@ class RegistrationController extends AbstractController
                     return $response;
                 }
 
-                // Si l'Email n'existe pas encore en BDD, alors on vérifie que les autres champs sont OK
-                // $password = $user->getPassword();
-                // $passwordConfirmation = $user->getPasswordConfirmation();
-                // // On s'assure que la confirmation du MDP = le MDP
-                // if (!($password === $passwordConfirmation)) {
-                //     $response = $this->render('registration/error.html.twig', [
-                //         'messageError' => 'Les mots de passe ne correspondent pas',
-                //     ]);
-                //     $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
-                //     return $response;
-                // }
-
                 // Hashe le MDP
                 $hashedPassword = $userPasswordHasher->hashPassword($user, $user->getPassword());
                 // Défini le mot de passe hashé dans l'objet Users
