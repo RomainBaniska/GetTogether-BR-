@@ -24,6 +24,8 @@ services:
             # J'ai commenté pour le pas avoir besoin du dossier "Entity"
             - '../src/Kernel.php'
 
+    # Ajout 05/03/2025 autowire de la session
+    # Symfony\Component\HttpFoundation\Session\SessionInterface: '@session'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

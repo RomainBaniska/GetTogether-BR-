@@ -1,79 +1,60 @@
 document.addEventListener('DOMContentLoaded', (e) => { 
 
-  let tagsChoices = [];
-
-
-// Fonction pour le traitement du clic sur un bouton tag-choice
-function handleTagChoiceClick(event) {
-    const button = event.target; // Récupérer le bouton sur lequel le clic s'est produit
-    toggleTagChoice(button); // Appeler la fonction pour basculer les classes
-    ListeDeBoutons(); // Mise à jour du tableau actif lorsqu'un bouton est cliqué
-  }
   
-  // Fonction pour basculer les classes du bouton
-  function toggleTagChoice(button) {
-
-    // Ajouter ou retirer la classe "tag-choice-active" du tag
-    button.classList.toggle('tag-choice-active');
-
-    // ajoute l'item à la liste des tags ou l'en retire si besoin
-    if (button.classList.contains("tag-choice-active")) {
-      tagsChoices.push(button.textContent);
-    } else {
-      tagsChoices.splice(tagsChoices.indexOf(button.textContent), 1);
-    }
-    
-  }
-  
-  // Récupérer tous les boutons avec la classe "tag-choice"
+  // CONSTANTES
+  const categories = document.getElementById('categories');
   const buttons = document.querySelectorAll('.tag-choice');
-  
-  // On met tous ces tags dans un tableau
-  let activeButtonsArray = [];
-  
-  // Ajouter un gestionnaire d'événements "click" à chaque bouton
+  const tagSearch = document.getElementById('tagsearch');
+  let tagsChoices = []; // Initialiser le tableau des tags
+  let btnTags = document.getElementById('btn-tags-save'); // récupère le bouton "btn-tags-save" (si présent)
+
+  // Lors du click sur un bouton tag-choice
   buttons.forEach(button => {
-    button.addEventListener('click', handleTagChoiceClick);
-  });
-
-// On crée une fonction qui va servir à afficher ou faire disparaitre certains "articles" grace à la searchbar.
-
-function handleCategorySelection() {
-
-  // Récupérer la balise select par son ID
-  const selectElement = document.getElementById('categories');
-
-  // Récupérer les options sélectionnées
-  const selectedOptions = Array.from(selectElement.selectedOptions);
-
-  // Créer un tableau pour stocker les valeurs sélectionnées 
-  const selectedValues = selectedOptions.map(option => option.value);
-
-  // Récupérer tous les articles dans la section mestags
-  const articles = document.querySelectorAll('#mestags article');
-
-  // Parcourir chaque article 
-  articles.forEach(article => {
-
-    // Récupérer chaque categorie de l'article (utiliser l'ID de l'article sans le préfixe "#")
-    const category = article.id;
-
-    // Vérifier si la categorie de l'article est incluse dans les valeurs sélectionnées 
-    if (selectedValues.includes (category)) {
-      article.style.display = 'block';
+      // Traitement du clic 
+      button.addEventListener('click', (e) => {
+      const clickedButton = e.target; // Récupérer le bouton sur lequel le clic s'est produit
+        
+      // Appeler la fonction pour basculer les classes
+      clickedButton.classList.toggle('tag-choice-active');
+      // ajoute l'item à la liste des tags ou l'en retire si besoin
+      if (clickedButton.classList.contains("tag-choice-active")) {
+        tagsChoices.push(clickedButton.textContent);
       } else {
-        // Sinon, masquer l'article 
-      article.style.display = 'none';
+        tagsChoices.splice(tagsChoices.indexOf(clickedButton.textContent), 1);
       }
+    });
   });
-}
+  
 
   // Ajouter un gestionnaire d'événements "change" à la balise select avec l'ID "categories"
+  // filtrage des catégories via la searchbar.
+  categories.addEventListener('change', () => {
 
-  document.getElementById('categories').addEventListener('change', handleCategorySelection);
+    // Récupérer les options sélectionnées
+    const selectedOptions = Array.from(categories.selectedOptions);
+    // Créer un tableau pour stocker les valeurs sélectionnées 
+    const selectedValues = selectedOptions.map(option => option.value);
+    // Récupérer tous les articles dans la section mestags
+    const articles = document.querySelectorAll('#mestags article');
 
+    // Parcourir chaque article 
+    articles.forEach(article => {
+      // Récupérer chaque categorie de l'article (utiliser l'ID de l'article sans le préfixe "#")
+      const category = article.id;
 
-  function handleSearch() {
+      // Vérifier si la categorie de l'article est incluse dans les valeurs sélectionnées 
+      if (selectedValues.includes (category)) {
+        article.style.display = 'block';
+        } else {
+          // Sinon, masquer l'article 
+        article.style.display = 'none';
+        }
+    });
+  });
+  
+
+  // Ajouter un gestionnaire d'événements "input" à la barre de recherche avec l'ID "tagsearch"
+  tagSearch.addEventListener('input', () => {
     // Récupérer la valeur saisie dans la barre de recherche
     const searchString = document.getElementById('tagsearch').value.toLowerCase();
     // Récupérer tous les titres d'article (éléments h2) dans la section mestags
@@ -91,42 +72,23 @@ function handleCategorySelection() {
         title.parentElement.style.display = "none";
       }
     });
-  }
+  });
   
-  // Ajouter un gestionnaire d'événements "input" à la barre de recherche avec l'ID "tagsearch"
-  document.getElementById('tagsearch').addEventListener('input', handleSearch);
-  
-  // récupère le bouton "btn-tags-save" (si présent)
-  let btnTags = document.getElementById('btn-tags-save');
-
-  // si on l'a terouvé
+  // Si les BTN tags existent :
   if (btnTags) {
-
     // ajout de l'évènement click sur le bouton
     btnTags.addEventListener('click', (e) => {
-
-      // console.log(tagsChoices);
       let jsonOutput = JSON.stringify(tagsChoices);
-
       fetch('/mestags/save/' + jsonOutput)
-      .then(response => {
-        
+      .then(response => {  
         if (response.status == 200) {
-          //document.location.replace('/route_e_lancer'); // Jean-Serge
-          // window.location.href = '/dashboard'; // Romain
-          // Apparemment ça fait quasiment pareil mais ça marche pas
           return response.text();
         }
       })
       .then(json => {
         console.log(JSON.parse(json));
-        
       })
-
-
     });
-
-
   }
 
 });

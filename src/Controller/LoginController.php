@@ -55,7 +55,6 @@ class LoginController extends AbstractController
 
                 // Vérifie si l'utilisateur a déjà rempli les informations de profil
                 if ($authenticatedUser->hasFilledProfile()) {
-
                     // Redirige vers le dashboard
                     return new RedirectResponse($this->generateUrl('app_dashboard'));
                 }
@@ -191,8 +190,6 @@ class LoginController extends AbstractController
         // Récupère l'utilisateur depuis la base de données en utilisant l'email
         $user = $userRepository->findOneBy(['email' => $email]);
 
-
-
         return $this->render('login/tags.html.twig', [
             // 'tagsForm' => $form->createView(),
             'tagsForm' => '$form->createView()',
@@ -221,35 +218,5 @@ class LoginController extends AbstractController
         // renvoie la réponse
         return new JsonResponse(['ok']);
     }
-
-    // #[Route('/tags/save/{jsontags}', name: 'app_login_tags_save')]
-    // /**
-    //  * Route de sauvegarde de la lsite des tags du user
-    //  *
-    //  * @param [type] $jsontags
-    //  * @param UserRepository $userRepo
-    //  * @return JsonResponse
-    //  */
-    // public function saveTags($jsontags, UserRepository $userRepository, SessionInterface $sessionInterface): JsonResponse
-    // {
-
-    //     // Récupérer l'email de l'utilisateur connecté depuis la session
-    //     $email = $sessionInterface->get('email');
-
-    //     // Récupérer l'utilisateur depuis la base de données en utilisant l'email
-    //     $user = $userRepository->findOneBy(['email' => $email]);
-
-    //     // récupère la liste complète des tags de l'utilisateur
-    //     $tags = json_decode($jsontags);
-
-    //     // Mettre à jour la propriété tagsByCategory de l'utilisateur avec les tags sélectionnés
-    //     $user->setTagsByCategory($tags);
-    //     $user->fill();
-
-    //     // faire ici l'ajout à la bdd
-    //     $userRepository->save($user);
-    //     // renvoie la réponse
-    //     return new JsonResponse(['ok']);
-    // }
 
 }

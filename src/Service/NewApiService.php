@@ -11,6 +11,7 @@ class NewApiService
 {
     
     private $client;
+    private $cache;
 
     public function __construct(HttpClientInterface $client, CacheInterface $cache)
     {
@@ -20,13 +21,11 @@ class NewApiService
 
     public function getDataById(string $eventUid): array {
 
-        // return dump('Cache miss - nouvelle donnée générée');
-
         return $this->cache->get('event_'.$eventUid, function (ItemInterface $item) use ($eventUid) {
             $item->expiresAfter(3600); // 1 heure de cache
 
         //  $response = $this->client->request('GET', 'https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/evenements-publics-openagenda/records?select=uid%2C%20title_fr%2C%20description_fr%2C%20image%2C%20firstdate_begin%2C%20firstdate_end%2C%20lastdate_begin%2C%20lastdate_end%2C%20location_coordinates%2C%20location_name%2C%20location_address%2C%20daterange_fr%2C%20longdescription_fr&limit=-1&refine=updatedat%3A%222024%22&refine=location_city%3A%22Paris%22&' . $eventUid);
-         $response = $this->client->request('GET', "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/evenements-publics-openagenda/records?select=uid%2C%20title_fr%2C%20description_fr%2C%20image%2C%20firstdate_begin%2C%20firstdate_end%2C%20lastdate_begin%2C%20lastdate_end%2C%20location_coordinates%2C%20location_name%2C%20location_address%2C%20daterange_fr%2C%20longdescription_fr&limit=-1&refine=updatedat%3A%222024%22&refine=location_city%3A%22Paris%22&where=uid%3D%22{$eventUid}%22");
+        $response = $this->client->request('GET', "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/evenements-publics-openagenda/records?select=uid%2C%20title_fr%2C%20description_fr%2C%20image%2C%20firstdate_begin%2C%20firstdate_end%2C%20lastdate_begin%2C%20lastdate_end%2C%20location_coordinates%2C%20location_name%2C%20location_address%2C%20daterange_fr%2C%20longdescription_fr&limit=-1&refine=updatedat%3A%222024%22&refine=location_city%3A%22Paris%22&where=uid%3D%22{$eventUid}%22");
 
         $statusCode = $response->getStatusCode();
         if ($statusCode !== 200) {
@@ -64,11 +63,10 @@ class NewApiService
         // $response = $this->client->request('GET', 'https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/evenements-publics-openagenda/records?select=uid%2C%20title_fr%2C%20description_fr%2C%20image%2C%20firstdate_begin%2C%20firstdate_end%2C%20lastdate_begin%2C%20lastdate_end%2C%20location_coordinates%2C%20location_name%2C%20location_address%2C%20daterange_fr%2C%20longdescription_fr&limit=-1&refine=updatedat%3A%222024%22&refine=location_city%3A%22Paris%22');
         $response = $this->client->request('GET', 'https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/evenements-publics-openagenda/records?select=uid%2C%20title_fr%2C%20description_fr%2C%20image%2C%20firstdate_begin%2C%20firstdate_end%2C%20lastdate_begin%2C%20lastdate_end%2C%20location_coordinates%2C%20location_name%2C%20location_address%2C%20daterange_fr%2C%20longdescription_fr&limit=-1&refine=updatedat%3A%222025%22&refine=location_city%3A%22Paris%22');
 
-        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
 
-        // On extrait la réponse qu'on met dans un tableau
-        $content = $response->toArray();
-        // $content = ['id' => 521583, 'name' => 'symfony-docs', ...]
+        // On définit comme contenu réponse qu'on a extraite et qu'on met dans un tableau.
+        $content = $response->toArray(); // $content = ['id' => 521583, 'name' => 'symfony-docs', ...]
 
         // Récupérer les résultats de la réponse. Si la réponse est vide ou null, renvoie un tableau vide
         $results = $content['results'] ?? [];
@@ -76,7 +74,7 @@ class NewApiService
         // On initialise un tableau pour la data complète
         $completeData = [];
 
-        
+        // Pour chaque résulat retourné par l'API, on crée un tableau data.
         foreach ($results as $result) {
             $data = [
                 'title' => $result['title_fr'], 
@@ -90,6 +88,7 @@ class NewApiService
                     'long' => $result['location_coordinates']['lon'],
                     'lat' => $result['location_coordinates']['lat']
                 ], 
+                // strip_tags supprime toutes les balises (style <p>) dans la string
                 'longdescription' => strip_tags($result['longdescription_fr']), 
 
                 'start' => $result['firstdate_begin'],
@@ -101,6 +100,7 @@ class NewApiService
                 'firstCategory' => null, // Initialisation à null, au cas où la catégorie n'est pas détectée          
             ];
 
+            // Liste des tags pour toutes les catégories
             $categories = [
                 "Arts" => [
                     "Comedie",
@@ -196,6 +196,12 @@ class NewApiService
                 ],
             ];
 
+            // On crée un tableau associatif categories où la clé est une catégorie et les valeurs sont des tags
+            // Ressemblant un peu à ceci : 
+            // $categories = [
+            //     'Sport' => ['football', 'basketball', 'tennis'],
+            //     'Musique' => ['rock', 'jazz', 'classique'],
+            // ];
             foreach ($categories as $category => $tags) {
                 foreach ($tags as $tag) {
                 if (stripos($result['title_fr'], $tag) !== false|| stripos($result['description_fr'], $tag) !== false || stripos($result['longdescription_fr'], $tag) !== false) {
@@ -217,6 +223,8 @@ class NewApiService
 
             $completeData[] = $data;
         }
+
+        // Retourne l'ensemble des datas traitées
         return $completeData;
     }
 

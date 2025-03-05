@@ -14,26 +14,46 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class DashboardController extends AbstractController
 {
+
+    // private $user;
+    // // private $sessionInterface;
+
+    // public function __construct(
+    // // SessionInterface $sessionInterface, 
+    // UserRepository $userRepository) {
+    //     // $this->sessionInterface = $sessionInterface;
+    //     // $email = $this->sessionInterface->get('email');
+    //     $this->user = $userRepository->findOneBy(['email' => $email]);
+    // }
+
     #[Route('/dashboard', name: 'app_dashboard')]
-    public function index(SessionInterface $sessionInterface, UserRepository $userRepository, NewApiService $api): Response
+    public function index(SessionInterface $sessionInterface, NewApiService $api, UserRepository $userRepository): Response
     {
 
-        // Select the current user
         $email = $sessionInterface->get('email');
         $user = $userRepository->findOneBy(['email' => $email]);
 
         // Récupérer les tags de l'utilisateur
-        // $tagsByCategory = $user->getTagsByCategory();
+        $tagsByCategory = $user->getTagsByCategory();
 
         // Reformater les données pour organiser les tags par catégorie
         $tagsGroupedByCategory = [];
 
-        // foreach ($tagsByCategory as $tag) {
-        //     $tagsGroupedByCategory[] = $tag; // Utilise $tag à la fois comme clé et valeur
-        // }
-
+        if ($tagsByCategory) { 
+        foreach ($tagsByCategory as $tag) {
+            $tagsGroupedByCategory[] = $tag; // Utilise $tag à la fois comme clé et valeur
+            }
+        }
+        
         // On charge les données de l'API 
-        $apiDatas = $api->getDatas();
+        $RawApiDatas = $api->getDatas();
+
+        // Si on veut mélanger ces résulats :
+        shuffle($RawApiDatas);
+        // On charge les 10 premiers résultats
+        // $apiDatas = array_slice($api->getDatas(), 0, 10);
+        $apiDatas = array_slice($RawApiDatas, 0, 10);
+        // dump($apiDatas);
        
         // Récupérer tous les événements
         // $events = $eventRepository->findAll();
@@ -64,21 +84,29 @@ class DashboardController extends AbstractController
 
 
     #[Route('/mestags', name: 'app_dashboard_mestags')]
-    public function mestags(SessionInterface $session, UserRepository $userRepo): Response
+    public function mestags(SessionInterface $sessionInterface, UserRepository $userRepository): Response
     {
 
-        // Récupérer l'email de l'utilisateur connecté depuis la session
-        $email = $session->get('email');
+        //  // Connexion
+        //  $email = $sessionInterface->get('email');
+        //  $user = $userRepository->findOneBy(['email' => $email]);
 
-        // Récupérer l'utilisateur depuis la base de données en utilisant l'email
-        $user = $userRepo->findOneBy(['email' => $email]);
-        
-        // $tagsByCategory = $user->getTagsByCategory();
+        //  // Récupérer les tags de l'utilisateur
+        //  $tagsByCategory = $user->getTagsByCategory();
+
+        //  // Reformater les données pour organiser les tags par catégorie
+        //  $tagsGroupedByCategory = [];
+ 
+        //  if ($tagsByCategory) { 
+        //  foreach ($tagsByCategory as $tag) {
+        //      $tagsGroupedByCategory[] = $tag; // Utilise $tag à la fois comme clé et valeur
+        //      }
+        //  }
 
         // Passez les données à votre modèle Twig et générez la vue
         return $this->render('dashboard/mestags.html.twig', [
-            'TagsData' => $tagsByCategory,
-            'user' => $user,
+            // 'TagsData' => $tagsByCategory,
+            // 'user' => $user,
         ]);
     }
 
@@ -90,13 +118,13 @@ class DashboardController extends AbstractController
      * @param UserRepository $userRepo
      * @return JsonResponse
      */
+
+    // $jsontags est récupérée via l'injection dans l'url lors de la soumission du formulaire
     public function saveTags($jsontags, UserRepository $userRepository, SessionInterface $sessionInterface): JsonResponse
     {
 
-        // Récupérer l'email de l'utilisateur connecté depuis la session
+        // Connexion
         $email = $sessionInterface->get('email');
-
-        // Récupérer l'utilisateur depuis la base de données en utilisant l'email
         $user = $userRepository->findOneBy(['email' => $email]);
 
         // récupère la liste complète des tags de l'utilisateur
@@ -104,7 +132,7 @@ class DashboardController extends AbstractController
 
         // Mettre à jour la propriété tagsByCategory de l'utilisateur avec les tags sélectionnés
         $user->setTagsByCategory($tags);
-        $user->fill();
+        // $user->fill();
 
         // faire ici l'ajout à la bdd
         $userRepository->save($user);
