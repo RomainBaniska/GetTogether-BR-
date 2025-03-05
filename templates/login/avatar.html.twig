@@ -60,7 +60,7 @@
 						</article>
 						<h2 class="text-center pt-5 m-0">Ou choisissez un avatar</h2>
 						<div class="divAvatar row"></div>
-						
+
 						<div class="d-flex divConfirmFile placementLeft">
 							<a href="{{ path('app_profil') }}" class="row col-6 justify-content-center"><img src="/assets/img/directLeft.svg" alt="" class="col-2"><p class="col-10">retour à l'étape précédente</p></a>
 							<button type="submit" class="inputsub btninscrire btn-valide colorWhite col-6" style="width: 40%; margin:0">Télécharger</button>
@@ -80,4 +80,45 @@
 		<a href="{{ path('app_tags') }}">Page de tags</a> #}
 
 	<script src="/assets/js/avatar.js"></script>
+
+	{# Retirer "required" dynamiquement pour le champs "file" #}
+	{# <script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const fileInput = document.getElementById('photo_form_photo');
+    const avatars = document.querySelectorAll('.avatar-choice'); // Adapté selon tes classes CSS
+    const form = document.querySelector('form');
+
+    function updateRequired() {
+        const isAvatarSelected = [...avatars].some(avatar => avatar.classList.contains('selected')); // Adapter si un input hidden est utilisé
+        if (isAvatarSelected) {
+            fileInput.removeAttribute('required');
+        } else {
+            fileInput.setAttribute('required', 'required');
+        }
+    }
+
+    // Vérifier le changement sur les avatars
+    avatars.forEach(avatar => {
+        avatar.addEventListener('click', function () {
+            avatars.forEach(a => a.classList.remove('selected'));
+            this.classList.add('selected');
+            updateRequired();
+        });
+    });
+
+    // Vérifier si un fichier est sélectionné
+    fileInput.addEventListener('change', function () {
+        updateRequired();
+    });
+
+    // Empêcher la soumission si aucun avatar ni fichier n'est sélectionné
+    form.addEventListener('submit', function (event) {
+        if (!fileInput.files.length && !document.querySelector('.avatar-choice.selected')) {
+            alert("Veuillez choisir une image ou un avatar.");
+            event.preventDefault();
+        }
+    });
+});
+</script> #}
+
 {% endblock %}

@@ -21,6 +21,7 @@ let labelFile = document.querySelector('.required');
 divAvatar.innerHTML = avatarList.map(img => `<div class="avatarPicture col-sm-6">
     <img class="avatarImg" src="/assets/img/avatar/${img}" alt="Avatar" data-avatar="${img}"></div>`).join("");
 
+
 // On gère la sélection d'un avatar
 divAvatar.addEventListener('click', (event) => {
     let selectedAvatar = event.target.closest('.avatarImg');
@@ -29,6 +30,12 @@ divAvatar.addEventListener('click', (event) => {
         fileInput.value = ''; // Réinitialise l'upload de fichier
         console.log("Avatar choisi :", avatarInput.value);
     }
+});
+
+// Gérer l'upload manuel
+fileInput.addEventListener('change', () => {
+    avatarInput.value = ''; // Réinitialise l'avatar si un fichier est uploadé
+    console.log("Fichier uploadé :", fileInput.files[0]?.name);
 });
 
 

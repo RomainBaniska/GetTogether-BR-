@@ -15,14 +15,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class DashboardController extends AbstractController
 {
     #[Route('/dashboard', name: 'app_dashboard')]
-    public function index(SessionInterface $sessionInterface, UserRepository $userRepository, EventRepository $eventRepository, NewApiService $api): Response
+    public function index(SessionInterface $sessionInterface, UserRepository $userRepository, NewApiService $api): Response
     {
 
         // Select the current user
         $email = $sessionInterface->get('email');
         $user = $userRepository->findOneBy(['email' => $email]);
-
-        // dump($user);
 
         // Récupérer les tags de l'utilisateur
         // $tagsByCategory = $user->getTagsByCategory();
@@ -38,8 +36,7 @@ class DashboardController extends AbstractController
         $apiDatas = $api->getDatas();
        
         // Récupérer tous les événements
-        $events = $eventRepository->findAll();
-
+        // $events = $eventRepository->findAll();
 
         // On initialise le FullCalendar
         $calendarEvents = [];

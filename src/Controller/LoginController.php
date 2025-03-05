@@ -124,6 +124,10 @@ class LoginController extends AbstractController
 
         // Récupérer l'utilisateur depuis la base de données en utilisant l'email
         $user = $userRepository->findOneBy(['email' => $email]);
+        if (!$user) {
+            $this->addFlash('error', 'Utilisateur non trouvé / Non connecté.');
+            return $this->redirectToRoute('app_login_avatar');
+        }        
 
         // Créer le formulaire
         $form = $this->createForm(PhotoFormType::class);
@@ -134,6 +138,8 @@ class LoginController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // Récupérer le fichier téléchargé
             $photoFile = $form->get('photo')->getData();
+            // Récupérer l'avatar sélectionné (si sélectionné)
+            $selectedAvatar = $request->request->get('selected_avatar');
 
             // Vérifier si un fichier a été téléchargé
             if ($photoFile) {
@@ -148,16 +154,26 @@ class LoginController extends AbstractController
                     $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de la photo.');
                     return $this->redirectToRoute('app_login_avatar');
                 }
+                 // Enregistrer le nom du fichier de la photo de profil dans l'utilisateur
+                //  $user->setProfilPicture($fileName);
+                 $user->setProfilPicture($fileName);
 
-                // Enregistrer le nom du fichier de la photo de profil dans l'utilisateur
-                $user->setProfilPicture($fileName);
+            } elseif ($selectedAvatar) {
+                // Si un avatar prédéfini a été choisi, l'utiliser comme photo de profil
+                // $user->setProfilPicture('/assets/img/avatar/' . $selectedAvatar);
+                $user->setProfilPicture($selectedAvatar);
+            } else {
+                $this->addFlash('error', 'Veuillez choisir une image ou un avatar.');
+                return $this->redirectToRoute('app_login_avatar');
+            }
+               
                 $user->fill();
                 $userRepository->save($user);
 
                 // Rediriger ou afficher un message de succès
                 $this->addFlash('success', 'La photo de profil a été téléchargée avec succès !');
                 return $this->redirectToRoute('app_login_tags');
-            }
+            // }
         }
 
         return $this->render('login/avatar.html.twig', [

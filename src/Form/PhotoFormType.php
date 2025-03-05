@@ -22,7 +22,8 @@ class PhotoFormType extends AbstractType
                     'class' => 'custom-file-input'
                 ],
                 'mapped' => false,
-                'required' => true,
+                // 'required' => true,
+                'required' => false,
                 'constraints' => [
                     new File([
                         'maxSize' => '5M', // Taille maximale du fichier (5 Mo dans cet exemple)

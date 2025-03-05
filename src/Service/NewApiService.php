@@ -61,33 +61,27 @@ class NewApiService
 
     public function getDatas(): array // attention array, pas une response car y'a pas de render
     {
-
-        $response = $this->client->request('GET', 'https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/evenements-publics-openagenda/records?select=uid%2C%20title_fr%2C%20description_fr%2C%20image%2C%20firstdate_begin%2C%20firstdate_end%2C%20lastdate_begin%2C%20lastdate_end%2C%20location_coordinates%2C%20location_name%2C%20location_address%2C%20daterange_fr%2C%20longdescription_fr&limit=-1&refine=updatedat%3A%222024%22&refine=location_city%3A%22Paris%22');
+        // $response = $this->client->request('GET', 'https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/evenements-publics-openagenda/records?select=uid%2C%20title_fr%2C%20description_fr%2C%20image%2C%20firstdate_begin%2C%20firstdate_end%2C%20lastdate_begin%2C%20lastdate_end%2C%20location_coordinates%2C%20location_name%2C%20location_address%2C%20daterange_fr%2C%20longdescription_fr&limit=-1&refine=updatedat%3A%222024%22&refine=location_city%3A%22Paris%22');
+        $response = $this->client->request('GET', 'https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/evenements-publics-openagenda/records?select=uid%2C%20title_fr%2C%20description_fr%2C%20image%2C%20firstdate_begin%2C%20firstdate_end%2C%20lastdate_begin%2C%20lastdate_end%2C%20location_coordinates%2C%20location_name%2C%20location_address%2C%20daterange_fr%2C%20longdescription_fr&limit=-1&refine=updatedat%3A%222025%22&refine=location_city%3A%22Paris%22');
 
         $statusCode = $response->getStatusCode();
-        // $statusCode = 200
 
-        $contentType = $response->getHeaders()['content-type'][0];
-        // $contentType = 'application/json'
-
-        $content = $response->getContent();
-        // $content = '{"id":521583, "name":"symfony-docs", ...}'
-
+        // On extrait la réponse qu'on met dans un tableau
         $content = $response->toArray();
         // $content = ['id' => 521583, 'name' => 'symfony-docs', ...]
 
-        // Récupérer les résultats de la réponse
-        $results = $content['results'];
+        // Récupérer les résultats de la réponse. Si la réponse est vide ou null, renvoie un tableau vide
+        $results = $content['results'] ?? [];
 
+        // On initialise un tableau pour la data complète
         $completeData = [];
 
+        
         foreach ($results as $result) {
-            
-            $imageUrl = !empty($result['image']) ? $result['image'] : '/assets/img/nopicture.jpg';
             $data = [
                 'title' => $result['title_fr'], 
                 'description' => $result['description_fr'], 
-                'image_url' => $imageUrl, 
+                'image_url' => $result['image'] ?? 'assets/img/nopicture.jpg', 
                 'address' => $result['location_address'], 
                 'eventId' => $result['uid'], 
                 'orga' => $result['location_name'], 
