@@ -87,26 +87,26 @@ class DashboardController extends AbstractController
     public function mestags(SessionInterface $sessionInterface, UserRepository $userRepository): Response
     {
 
-        //  // Connexion
-        //  $email = $sessionInterface->get('email');
-        //  $user = $userRepository->findOneBy(['email' => $email]);
+         // Connexion
+         $email = $sessionInterface->get('email');
+         $user = $userRepository->findOneBy(['email' => $email]);
 
-        //  // Récupérer les tags de l'utilisateur
-        //  $tagsByCategory = $user->getTagsByCategory();
+         // Récupérer les tags de l'utilisateur
+         $tagsByCategory = $user->getTagsByCategory();
 
-        //  // Reformater les données pour organiser les tags par catégorie
-        //  $tagsGroupedByCategory = [];
+         // Reformater les données pour organiser les tags par catégorie
+         $tagsGroupedByCategory = [];
  
-        //  if ($tagsByCategory) { 
-        //  foreach ($tagsByCategory as $tag) {
-        //      $tagsGroupedByCategory[] = $tag; // Utilise $tag à la fois comme clé et valeur
-        //      }
-        //  }
+         if ($tagsByCategory) { 
+         foreach ($tagsByCategory as $tag) {
+             $tagsGroupedByCategory[] = $tag; // Utilise $tag à la fois comme clé et valeur
+             }
+         }
 
         // Passez les données à votre modèle Twig et générez la vue
         return $this->render('dashboard/mestags.html.twig', [
-            // 'TagsData' => $tagsByCategory,
-            // 'user' => $user,
+            'TagsData' => $tagsByCategory,
+            'user' => $user,
         ]);
     }
 

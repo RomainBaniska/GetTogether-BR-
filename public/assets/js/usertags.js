@@ -1,15 +1,25 @@
-document.addEventListener('DOMContentLoaded', (e) => { 
+document.addEventListener('DOMContentLoaded', () => { 
 
-  
   // CONSTANTES
+  // const selectedTags = {{ TagsData|json_encode|raw }}; // tags de l'utilisateur  
   const categories = document.getElementById('categories');
   const buttons = document.querySelectorAll('.tag-choice');
   const tagSearch = document.getElementById('tagsearch');
   let tagsChoices = []; // Initialiser le tableau des tags
-  let btnTags = document.getElementById('btn-tags-save'); // récupère le bouton "btn-tags-save" (si présent)
+  let saveTagsBtn = document.getElementById('btn-tags-save'); // récupère le bouton "btn-tags-save" (qui enregistre en BDD les tags en mémoire)
 
   // Lors du click sur un bouton tag-choice
   buttons.forEach(button => {
+
+      // Récupération et activation d'office des tags déjà enregistrés par l'utilisateur
+      // selectedTags défini directement sur le twig (tags de l'utilisateur connecté)
+      const tagText = button.textContent;
+                if (selectedTags.includes(tagText)) {
+                    button.classList.add('tag-choice-active');
+                    tagsChoices.push(tagText); // Ajouter ce tag à la liste des choix
+                    console.log('ça marche js')
+                }
+
       // Traitement du clic 
       button.addEventListener('click', (e) => {
       const clickedButton = e.target; // Récupérer le bouton sur lequel le clic s'est produit
@@ -25,7 +35,7 @@ document.addEventListener('DOMContentLoaded', (e) => {
     });
   });
   
-
+  if (categories) {
   // Ajouter un gestionnaire d'événements "change" à la balise select avec l'ID "categories"
   // filtrage des catégories via la searchbar.
   categories.addEventListener('change', () => {
@@ -51,12 +61,13 @@ document.addEventListener('DOMContentLoaded', (e) => {
         }
     });
   });
+  }
   
-
+  if (tagSearch) {
   // Ajouter un gestionnaire d'événements "input" à la barre de recherche avec l'ID "tagsearch"
   tagSearch.addEventListener('input', () => {
     // Récupérer la valeur saisie dans la barre de recherche
-    const searchString = document.getElementById('tagsearch').value.toLowerCase();
+    const searchString = tagSearch.value.toLowerCase();
     // Récupérer tous les titres d'article (éléments h2) dans la section mestags
     const articleTitles = document.querySelectorAll('#mestags article h2');
     // Parcourir chaque titre d'article
@@ -73,22 +84,30 @@ document.addEventListener('DOMContentLoaded', (e) => {
       }
     });
   });
+}
   
   // Si les BTN tags existent :
-  if (btnTags) {
-    // ajout de l'évènement click sur le bouton
-    btnTags.addEventListener('click', (e) => {
+  if (saveTagsBtn) {
+    // Cliquer sur les boutons fetch la route du dashboardcontroller
+    saveTagsBtn.addEventListener('click', () => {
       let jsonOutput = JSON.stringify(tagsChoices);
+      // Fetch sur le DashboardController! (cf : jsonTags)
       fetch('/mestags/save/' + jsonOutput)
       .then(response => {  
         if (response.status == 200) {
           return response.text();
         }
+        throw new Error('Echec de sauvegarde des tags');
       })
       .then(json => {
         console.log(JSON.parse(json));
       })
+      .catch(error => {
+        console.error('Erreur:', error);
+      });
     });
   }
 
 });
+
+
