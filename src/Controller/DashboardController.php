@@ -14,27 +14,24 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class DashboardController extends AbstractController
 {
-
-    // private $user;
-    // // private $sessionInterface;
-
-    // public function __construct(
-    // // SessionInterface $sessionInterface, 
-    // UserRepository $userRepository) {
-    //     // $this->sessionInterface = $sessionInterface;
-    //     // $email = $this->sessionInterface->get('email');
-    //     $this->user = $userRepository->findOneBy(['email' => $email]);
-    // }
-
     #[Route('/dashboard', name: 'app_dashboard')]
     public function index(SessionInterface $sessionInterface, NewApiService $api, UserRepository $userRepository): Response
     {
-
         $email = $sessionInterface->get('email');
+
+        // if (!$email) {
+        //     return $this->redirectToRoute("app_login");
+        // } 
+        // else 
+        // {
+
         $user = $userRepository->findOneBy(['email' => $email]);
 
+        // dump($user);
+        // dump($email);
+
         // Récupérer les tags de l'utilisateur
-        $tagsByCategory = $user->getTagsByCategory();
+        $tagsByCategory = $user->getTagsByCategory() ?? [];
 
         // Reformater les données pour organiser les tags par catégorie
         $tagsGroupedByCategory = [];
@@ -80,6 +77,7 @@ class DashboardController extends AbstractController
             'events' => $apiDatas,
             'datas' => $calendarDatas,
         ]);
+    // }
     }
 
 
