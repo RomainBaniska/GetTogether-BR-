@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', (e) => {
 
     //@todo : Ajouter une classe pour de cibler que les formulaire devant lancer des modals
     const elements = document.querySelectorAll('form button.registration[type="submit"]');
+    const loginEmail = document.getElementById('registration_form_password_email');
     const pw1 = document.getElementById('registration_form_password_first');
     const pw2 = document.getElementById('registration_form_password_second');
 
@@ -49,13 +50,14 @@ document.addEventListener('DOMContentLoaded', (e) => {
                 }
             })
             .then(html => {
-                // if (!(pw1 === pw2)) {
-                // console.log(pw1.value);
-                // console.log(pw2.value);
                 if (pw1.value !== pw2.value) {
                     let btn = document.querySelector('#modal .modal-footer button');
                     btn.style.visibility = "hidden";
                     document.querySelector('#modal .modal-body').innerHTML = "les passwords ne correspondent pas";
+                } else if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginEmail)) {
+                    let btn = document.querySelector('#modal .modal-footer button');
+                    btn.style.visibility = "hidden";
+                    document.querySelector('#modal .modal-body').innerHTML = "Email Invalide";
                 } else {
                 document.querySelector('#modal .modal-body').innerHTML = html;
                 }
