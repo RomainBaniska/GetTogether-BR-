@@ -50,17 +50,18 @@ document.addEventListener('DOMContentLoaded', (e) => {
                 }
             })
             .then(html => {
-                if (pw1.value !== pw2.value) {
-                    let btn = document.querySelector('#modal .modal-footer button');
-                    btn.style.visibility = "hidden";
-                    document.querySelector('#modal .modal-body').innerHTML = "les passwords ne correspondent pas";
-                } else if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginEmail)) {
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginEmail)) {
                     let btn = document.querySelector('#modal .modal-footer button');
                     btn.style.visibility = "hidden";
                     document.querySelector('#modal .modal-body').innerHTML = "Email Invalide";
+                } else if (pw1.value !== pw2.value) {
+                    let btn = document.querySelector('#modal .modal-footer button');
+                    btn.style.visibility = "hidden";
+                    document.querySelector('#modal .modal-body').innerHTML = "Les passwords ne correspondent pas";
                 } else {
-                document.querySelector('#modal .modal-body').innerHTML = html;
+                    document.querySelector('#modal .modal-body').innerHTML = html;
                 }
+                
             
 
 
