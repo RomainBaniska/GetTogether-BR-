@@ -552,7 +552,7 @@ background-color: #E0E0E0;
   width: 100%;
   max-width: 210px;
   border-radius: 5px !important;
-  background-image: url('../img/imageglitter.jpg'); 
+  /* background-image: url('../img/imageglitter.jpg');  */
   background-repeat: no-repeat;
   background-size: cover;
   margin: 30px 16px 30px 0;

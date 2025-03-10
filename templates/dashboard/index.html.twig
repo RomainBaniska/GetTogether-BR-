@@ -98,39 +98,22 @@
 						</h3>
 
 						<div class="d-flex justify-content-start">
-							<div
-								class="cardeventsmall">
-								<!-- CARD event SMALL start  -->
+						 {% for event in filteredEvents %}
+							<div class="cardeventsmall" style="background-image: url('{{ event.image_url }}');">
 								<div class="cardtagfav">
-									<p class="tagcardsmall bg-light text-black bg-opacity-75 avenirbold">Tag</p>
+									<p class="tagcardsmall bg-light text-black bg-opacity-75 avenirbold">{{ event.firstCategory }}</p>
 								</div>
 								<div class="bg-dark bg-opacity-75 text-white cardtext">
 									<div>
-										<h5>Le roi Jean</h5>
-										<p class="icondate">29/08/2023</p>
-										<p class="iconloc">L'opera de Paris</p>
+										<h5>{{ event.title }}</h5>
+										<p class="icondate">{{ event.start|date('d-m-Y') }}</p>
+										<p class="iconloc">{{ event.address }}</p>
 									</div>
 								</div>
 							</div>
-							<!-- CARD event SMALL end  -->
-
-							<div
-								class="cardeventsmall">
-								<!-- CARD event SMALL start  -->
-								<div class="cardtagfav">
-									<p class="tagcardsmall bg-light text-black bg-opacity-75 avenirbold">Tag</p>
-								</div>
-								<div class="bg-dark bg-opacity-75 text-white cardtext">
-									<div>
-										<h5>Le roi Jean</h5>
-										<p class="icondate">29/08/2023</p>
-										<p class="iconloc">L'opera de Paris</p>
-									</div>
-								</div>
-							</div>
-							<!-- CARD event SMALL end  -->
+						 {% endfor %}
 						</div>
-						<p>Vous ne participez pas encore à aucun event</p>
+						{# <p>Vous ne participez pas encore à aucun event</p> #}
 					</div>
 				</div>
 				<div class="columnspacer col-md-1 col-12"></div>

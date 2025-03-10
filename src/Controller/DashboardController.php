@@ -32,29 +32,67 @@ class DashboardController extends AbstractController
 
         // Reformater les données pour organiser les tags par catégorie
         $tagsGroupedByCategory = [];
+        $userTags = [];
 
         if ($tagsByCategory) { 
         foreach ($tagsByCategory as $tag) {
-            $tagsGroupedByCategory[] = $tag; // Utilise $tag à la fois comme clé et valeur
-            }
+            $tagsGroupedByCategory[] = $tag; // Utilise $tag à la fois comme clé et valeur / tag en minuscule
+            $userTags[] = strtolower($tag);
         }
+        }
+        // dump($tagsGroupedByCategory);
+        // dump($userTags);
         
         // On charge les données de l'API 
         $RawApiDatas = $api->getDatas();
 
-        // Si on veut mélanger ces résulats :
+        // 2 EVENTS RECOMMANDES SUR LA PAGE
+        // Filtrer les événements selon les tags de l'utilisateur
+        $filteredEvents = [];
+
+        //   dump($tagsGroupedByCategory); 
+
+        foreach ($RawApiDatas as $event) {
+            // dump($event['tags']); // Vérifier ce que contient le tableau de tags de l'événement
+            // dump($tagsGroupedByCategory); 
+            foreach ($tagsGroupedByCategory as $tag) {
+
+                // dump($event['tags']);
+                // dump($tagsGroupedByCategory); 
+                   // Vérifier si un des tags de l'utilisateur est présent parmi les tags de l'événement
+                   // On vérifie si event['tags'] est un tableau, et ensuite si $tagsGroupedByCategory se trouve dans event['tags']
+                    // if (is_array($event['tags']) && in_array($tagsGroupedByCategory, $event['tags'])) {
+                    if (is_array($event['tags']) && array_intersect($tagsGroupedByCategory, $event['tags'])) {
+                    $filteredEvents[] = $event;
+                    // dump($filteredEvents);
+                    break; // Évite d'ajouter plusieurs fois le même événement
+                }
+            }
+
+            if (count($filteredEvents) >= 2) {
+                break; // On limite à 2 événements filtrés
+            }
+        }
+
+        //  dump($filteredEvents);
+
+        // Pour les événéments "en vrac" : on veut mélanger ces résulats :
         shuffle($RawApiDatas);
         // On charge les 10 premiers résultats
-        // $apiDatas = array_slice($api->getDatas(), 0, 10);
         $apiDatas = array_slice($RawApiDatas, 0, 10);
-        // dump($apiDatas);
-       
-        // Récupérer tous les événements
+
+        // solution BDD ? : Récupérer tous les événements
         // $events = $eventRepository->findAll();
 
-        // On initialise le FullCalendar
+
+        // dump($event);
+        // dump($RawApiDatas);
+        // dump($userTags);
+        // dump($filteredEvents);
+
+        // FULLCALENDAR
+        // On initialise un tableau d'events
         $calendarEvents = [];
-       
         // Boucle sur tous les événements pour récupérer les données et les afficher sur le fullcalendar
         foreach ($apiDatas as $apiData) {
             $calendarEvent = [
@@ -67,11 +105,15 @@ class DashboardController extends AbstractController
    
            $calendarDatas = json_encode($calendarEvents);
 
+        //    dump($filteredEvents);
+
+
         return $this->render('dashboard/index.html.twig', [
             'tagsByCategory' => $tagsGroupedByCategory,
             'pseudo' => $user,
             'user' => $user,
-            'events' => $apiDatas,
+            'events' => $apiDatas, // 10 events en vrac
+            'filteredEvents' => $filteredEvents, // 2 events filtrés par tags
             'datas' => $calendarDatas,
         ]);
     }
