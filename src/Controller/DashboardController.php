@@ -19,16 +19,13 @@ class DashboardController extends AbstractController
     {
         $email = $sessionInterface->get('email');
 
-        // if (!$email) {
-        //     return $this->redirectToRoute("app_login");
-        // } 
-        // else 
-        // {
+        if (!$email) {
+            return $this->redirectToRoute("app_login");
+        } 
+        else 
+        {
 
         $user = $userRepository->findOneBy(['email' => $email]);
-
-        // dump($user);
-        // dump($email);
 
         // Récupérer les tags de l'utilisateur
         $tagsByCategory = $user->getTagsByCategory() ?? [];
@@ -58,7 +55,7 @@ class DashboardController extends AbstractController
         // On initialise le FullCalendar
         $calendarEvents = [];
        
-        // Boucle sur tous les événements pour récupérer les données et les afficher
+        // Boucle sur tous les événements pour récupérer les données et les afficher sur le fullcalendar
         foreach ($apiDatas as $apiData) {
             $calendarEvent = [
                 'title' => $apiData['title'],
@@ -77,7 +74,7 @@ class DashboardController extends AbstractController
             'events' => $apiDatas,
             'datas' => $calendarDatas,
         ]);
-    // }
+    }
     }
 
 

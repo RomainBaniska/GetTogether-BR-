@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', (e) => {
 
     //@todo : Ajouter une classe pour de cibler que les formulaire devant lancer des modals
     const elements = document.querySelectorAll('form button.registration[type="submit"]');
-    const loginEmail = document.getElementById('registration_form_password_email');
+    const loginEmail = document.getElementById('registration_form_email');
     const pw1 = document.getElementById('registration_form_password_first');
     const pw2 = document.getElementById('registration_form_password_second');
 
@@ -50,7 +50,8 @@ document.addEventListener('DOMContentLoaded', (e) => {
                 }
             })
             .then(html => {
-                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginEmail)) {
+                console.log("Valeur de l'email :", loginEmail?.value);
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginEmail.value)) {
                     let btn = document.querySelector('#modal .modal-footer button');
                     btn.style.visibility = "hidden";
                     document.querySelector('#modal .modal-body').innerHTML = "Email Invalide";
@@ -62,8 +63,6 @@ document.addEventListener('DOMContentLoaded', (e) => {
                     document.querySelector('#modal .modal-body').innerHTML = html;
                 }
                 
-            
-
 
                 const myModal = new bootstrap.Modal('#modal', {keyboard: false})
                 myModal.show();
