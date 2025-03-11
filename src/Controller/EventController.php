@@ -120,8 +120,9 @@ class EventController extends AbstractController
     #[Route('/{eventUid}', name: 'app_event_show')]
     public function show(ChatMessageRepository $chatMessageRepository, string $eventUid, SessionInterface $sessionInterface, NewApiService $newApi): Response
     {
-
-        $event = $newApi->getDataById($eventUid);
+        // $event = $newApi->getDataById($eventUid);
+        $event = $newApi->getEventDetail($eventUid);
+        
         if (!$event) {
         return $this->render('event/error.html.twig', [], new Response('', 404));
     }

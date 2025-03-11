@@ -19,10 +19,44 @@ class NewApiService
         $this->cache = $cache;
     }
 
+    public function getEventDetail(string $eventUid): array {
+        $responsePage = $this->client->request('GET', 'https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/evenements-publics-openagenda/records?select=uid%2C%20title_fr%2C%20description_fr%2C%20image%2C%20firstdate_begin%2C%20firstdate_end%2C%20lastdate_begin%2C%20lastdate_end%2C%20location_coordinates%2C%20location_name%2C%20location_address%2C%20daterange_fr%2C%20longdescription_fr&limit=-1&refine=updatedat%3A%222025%22&refine=location_city%3A%22Paris%22&' . $eventUid);
+       
+        $statusCode = $responsePage->getStatusCode();
+        if ($statusCode !== 200) {
+            return null;
+        }
+
+        $resultsPage = $responsePage->toArray();
+
+        foreach ($resultsPage['results'] as $result) {
+            if ($result['uid'] === $eventUid) {
+                $imageUrl = !empty($result['image']) ? $result['image'] : '/assets/img/nopicture.jpg';
+                return [
+                    'title' => $result['title_fr'],
+                    'description' => $result['description_fr'],
+                    'image' => $imageUrl,
+                    'address' => $result['location_address'],
+                    'eventUid' => $result['uid'], 
+                    'date' => $result['daterange_fr'], 
+                    'orga' => $result['location_name'], 
+                    'eventUid' => $result['uid'],
+                    'location_coordinates' => [
+                        'long' => $result['location_coordinates']['lon'],
+                        'lat' => $result['location_coordinates']['lat']
+                    ],
+                ];
+
+            }
+        }
+        return null;
+    }
+
+
     public function getDataById(string $eventUid): array {
 
-        return $this->cache->get('event_'.$eventUid, function (ItemInterface $item) use ($eventUid) {
-            $item->expiresAfter(3600); // 1 heure de cache
+        // return $this->cache->get('event_'.$eventUid, function (ItemInterface $item) use ($eventUid) {
+        //     $item->expiresAfter(3600); // 1 heure de cache
 
         //  $response = $this->client->request('GET', 'https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/evenements-publics-openagenda/records?select=uid%2C%20title_fr%2C%20description_fr%2C%20image%2C%20firstdate_begin%2C%20firstdate_end%2C%20lastdate_begin%2C%20lastdate_end%2C%20location_coordinates%2C%20location_name%2C%20location_address%2C%20daterange_fr%2C%20longdescription_fr&limit=-1&refine=updatedat%3A%222024%22&refine=location_city%3A%22Paris%22&' . $eventUid);
         $response = $this->client->request('GET', "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/evenements-publics-openagenda/records?select=uid%2C%20title_fr%2C%20description_fr%2C%20image%2C%20firstdate_begin%2C%20firstdate_end%2C%20lastdate_begin%2C%20lastdate_end%2C%20location_coordinates%2C%20location_name%2C%20location_address%2C%20daterange_fr%2C%20longdescription_fr&limit=-1&refine=updatedat%3A%222024%22&refine=location_city%3A%22Paris%22&where=uid%3D%22{$eventUid}%22");
@@ -55,7 +89,7 @@ class NewApiService
             }
         }
         return null;
-     }); // Fin du cache
+    //  }); // Fin du cache
     }
 
     public function getDatas(): array // attention array, pas une response car y'a pas de render
