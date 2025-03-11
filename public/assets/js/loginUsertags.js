@@ -1,26 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => { 
 
+  console.log("ça marche");
+
   // CONSTANTES
-  // const selectedTags = {{ TagsData|json_encode|raw }}; // tags de l'utilisateur  
   const categories = document.getElementById('categories');
   const buttons = document.querySelectorAll('.tag-choice');
   const tagSearch = document.getElementById('tagsearch');
   let tagsChoices = []; // Initialiser le tableau des tags
-  let saveTagsBtn = document.getElementById('btn-tags-save'); // récupère le bouton "btn-tags-save" (qui enregistre en BDD les tags en mémoire)
+  let saveTagsBtn = document.getElementById('btn-tags-save');
 
-  // Lors du click sur un bouton tag-choice
   buttons.forEach(button => {
-
-      // Récupération et activation d'office des tags déjà enregistrés par l'utilisateur
-      // selectedTags défini directement sur le twig (tags de l'utilisateur connecté)
-      const tagText = button.textContent;
-                if (selectedTags.includes(tagText)) {
-                    button.classList.add('tag-choice-active');
-                    tagsChoices.push(tagText); // Ajouter ce tag à la liste des choix
-                }
-
-      // Traitement du clic 
-      button.addEventListener('click', (e) => {
+     // Traitement du clic 
+     button.addEventListener('click', (e) => {
       const clickedButton = e.target; // Récupérer le bouton sur lequel le clic s'est produit
         
       // Appeler la fonction pour basculer les classes
@@ -32,9 +23,12 @@ document.addEventListener('DOMContentLoaded', () => {
         tagsChoices.splice(tagsChoices.indexOf(clickedButton.textContent), 1);
       }
     });
-  });
-  
-  if (categories) {
+
+            });
+
+
+
+if (categories) {
   // Ajouter un gestionnaire d'événements "change" à la balise select avec l'ID "categories"
   // filtrage des catégories via la searchbar.
   categories.addEventListener('change', () => {
@@ -61,30 +55,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
   }
-  
+
   if (tagSearch) {
-  // Ajouter un gestionnaire d'événements "input" à la barre de recherche avec l'ID "tagsearch"
-  tagSearch.addEventListener('input', () => {
-    // Récupérer la valeur saisie dans la barre de recherche
-    const searchString = tagSearch.value.toLowerCase();
-    // Récupérer tous les titres d'article (éléments h2) dans la section mestags
-    const articleTitles = document.querySelectorAll('#mestags article h2');
-    // Parcourir chaque titre d'article
-    articleTitles.forEach(title => {
-      // Récupérer le texte du titre d'article 
-      const titleText = title.textContent.toLowerCase();
-      // Vérifier si le texte du titre d'article contient la chaîne de caractères saisie dans la recherche
-      if (titleText.includes(searchString)) {
-        // Si le titre d'article contient la chaîne de caractères saisie, afficher l'article parent
-        title.parentElement.style.display = 'block';
-      } else {
-        // Sinon masquer l'article parent
-        title.parentElement.style.display = "none";
-      }
+    // Ajouter un gestionnaire d'événements "input" à la barre de recherche avec l'ID "tagsearch"
+    tagSearch.addEventListener('input', () => {
+      // Récupérer la valeur saisie dans la barre de recherche
+      const searchString = tagSearch.value.toLowerCase();
+      // Récupérer tous les titres d'article (éléments h2) dans la section mestags
+      const articleTitles = document.querySelectorAll('#mestags article h2');
+      // Parcourir chaque titre d'article
+      articleTitles.forEach(title => {
+        // Récupérer le texte du titre d'article 
+        const titleText = title.textContent.toLowerCase();
+        // Vérifier si le texte du titre d'article contient la chaîne de caractères saisie dans la recherche
+        if (titleText.includes(searchString)) {
+          // Si le titre d'article contient la chaîne de caractères saisie, afficher l'article parent
+          title.parentElement.style.display = 'block';
+        } else {
+          // Sinon masquer l'article parent
+          title.parentElement.style.display = "none";
+        }
+      });
     });
-  });
-}
-  
+  }
+
   // Si les BTN tags existent :
   if (saveTagsBtn) {
     // Cliquer sur les boutons fetch la route du dashboardcontroller
@@ -108,5 +102,3 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
-
-

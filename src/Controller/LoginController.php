@@ -181,16 +181,15 @@ class LoginController extends AbstractController
 
     // Redirection vers le choix des tags
     #[Route('/tags', name: 'app_login_tags')]
-    public function tags(Request $request, UserRepository $userRepository, SessionInterface $sessionInterface, TagsFormType $tagsFormType): Response
+    public function tags(UserRepository $userRepository, SessionInterface $sessionInterface): Response
     {
-        // Récupère l'email de l'utilisateur connecté depuis la session
-        $email = $sessionInterface->get('email');
+        // // Récupère l'email de l'utilisateur connecté depuis la session
+        // $email = $sessionInterface->get('email');
 
-        // Récupère l'utilisateur depuis la base de données en utilisant l'email
-        $user = $userRepository->findOneBy(['email' => $email]);
+        // // Récupère l'utilisateur depuis la base de données en utilisant l'email
+        // $user = $userRepository->findOneBy(['email' => $email]);
 
         return $this->render('login/tags.html.twig', [
-            // 'tagsForm' => $form->createView(),
             'tagsForm' => '$form->createView()',
         ]);
     }

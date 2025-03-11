@@ -40,8 +40,6 @@ class DashboardController extends AbstractController
             $userTags[] = strtolower($tag);
         }
         }
-        // dump($tagsGroupedByCategory);
-        // dump($userTags);
         
         // On charge les données de l'API 
         $RawApiDatas = $api->getDatas();
@@ -50,15 +48,9 @@ class DashboardController extends AbstractController
         // Filtrer les événements selon les tags de l'utilisateur
         $filteredEvents = [];
 
-        //   dump($tagsGroupedByCategory); 
-
         foreach ($RawApiDatas as $event) {
-            // dump($event['tags']); // Vérifier ce que contient le tableau de tags de l'événement
-            // dump($tagsGroupedByCategory); 
             foreach ($tagsGroupedByCategory as $tag) {
 
-                // dump($event['tags']);
-                // dump($tagsGroupedByCategory); 
                    // Vérifier si un des tags de l'utilisateur est présent parmi les tags de l'événement
                    // On vérifie si event['tags'] est un tableau, et ensuite si $tagsGroupedByCategory se trouve dans event['tags']
                     // if (is_array($event['tags']) && in_array($tagsGroupedByCategory, $event['tags'])) {
@@ -74,21 +66,10 @@ class DashboardController extends AbstractController
             }
         }
 
-        //  dump($filteredEvents);
-
         // Pour les événéments "en vrac" : on veut mélanger ces résulats :
         shuffle($RawApiDatas);
         // On charge les 10 premiers résultats
         $apiDatas = array_slice($RawApiDatas, 0, 10);
-
-        // solution BDD ? : Récupérer tous les événements
-        // $events = $eventRepository->findAll();
-
-
-        // dump($event);
-        // dump($RawApiDatas);
-        // dump($userTags);
-        // dump($filteredEvents);
 
         // FULLCALENDAR
         // On initialise un tableau d'events
