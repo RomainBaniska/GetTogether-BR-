@@ -37,8 +37,16 @@
                         eventColor: '#B60006',
                         eventClick: function(info) {
                                         if (info.event) {
-                                            alert('Evènement : ' + info.event.title);
+                                          //  alert('Evènement : ' + info.event.title);
                                           //  window.open(info.event.url);
+                                           Swal.fire({
+                                                title: info.event.title,
+                                                // text: info.event.start,
+                                                text: info.event.start.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
+                                                icon: "info",
+                                                confirmButtonText: "OK",
+                                                confirmButtonColor: "#B60006"
+                                            });
                                         }
                                         else {
                                             alert('No event clicked for this date.');
@@ -54,4 +62,6 @@
             <div id='calendar'></div>
         </body>    
         </html>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {% endblock %}

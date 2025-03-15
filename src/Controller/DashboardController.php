@@ -53,10 +53,8 @@ class DashboardController extends AbstractController
 
                    // Vérifier si un des tags de l'utilisateur est présent parmi les tags de l'événement
                    // On vérifie si event['tags'] est un tableau, et ensuite si $tagsGroupedByCategory se trouve dans event['tags']
-                    // if (is_array($event['tags']) && in_array($tagsGroupedByCategory, $event['tags'])) {
                     if (is_array($event['tags']) && array_intersect($tagsGroupedByCategory, $event['tags'])) {
                     $filteredEvents[] = $event;
-                    // dump($filteredEvents);
                     break; // Évite d'ajouter plusieurs fois le même événement
                 }
             }

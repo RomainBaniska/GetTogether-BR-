@@ -29,8 +29,8 @@ class CalendarController extends AbstractController
             $calendarEvents[] = $calendarEvent;
         }
     
-        dump($calendarEvents);
-        dump($calendarEvent);
+        // dump($calendarEvents);
+        // dump($calendarEvent);
 
         $datas = json_encode($calendarEvents);
         
