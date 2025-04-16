@@ -72,7 +72,7 @@ class ApiController extends AbstractController
 
             $categories = [
                 "Arts" => [
-                    "Comedie",
+                    "Comédie",
                     "Atelier",
                     "Sculpture",
                     "Design",
@@ -186,7 +186,7 @@ class ApiController extends AbstractController
             $completeData[] = $data;
         }
         
-        dump($completeData);
+        // dump($completeData);
         
         return $this->render('api/api.html.twig', [
             'controller_name' => 'ApiController',

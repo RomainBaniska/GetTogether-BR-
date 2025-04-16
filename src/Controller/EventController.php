@@ -57,19 +57,19 @@ class EventController extends AbstractController
         ]);
     }
 
-    // affichage events via API en direct
-    #[Route('/affichage2', name: 'app_event_affichage2')]
-    public function AfficheEvent2(NewApiService $newApi, CacheInterface $cache): Response
-    {
+    // // affichage events via API en direct
+    // #[Route('/affichage2', name: 'app_event_affichage2')]
+    // public function AfficheEvent2(NewApiService $newApi, CacheInterface $cache): Response
+    // {
 
-    $data = $newApi->getDatas();
+    // $data = $newApi->getDatas();
 
-    dump($data);
+    // dump($data);
       
-    return $this->render('event/affichage2.html.twig', [
-        'data' => $data,
-    ]);
-    }
+    // return $this->render('event/affichage2.html.twig', [
+    //     'data' => $data,
+    // ]);
+    // }
 
 
     // Envoie des évenements en BDD
@@ -121,7 +121,8 @@ class EventController extends AbstractController
     public function show(ChatMessageRepository $chatMessageRepository, string $eventUid, SessionInterface $sessionInterface, NewApiService $newApi): Response
     {
         // $event = $newApi->getDataById($eventUid);
-        $event = $newApi->getEventDetail($eventUid);
+        // $event = $newApi->getEventDetail($eventUid);
+        $event = $newApi->getEventDetailBeyond($eventUid);
         
         if (!$event) {
         return $this->render('event/error.html.twig', [], new Response('', 404));

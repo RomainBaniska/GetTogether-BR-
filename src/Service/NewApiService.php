@@ -52,45 +52,122 @@ class NewApiService
         return null;
     }
 
+    public function getEventDetailBeyond(string $eventUid): ?array
+{
+    $responsePage = $this->client->request(
+        'GET',
+        'https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/evenements-publics-openagenda/records?select=uid%2C%20title_fr%2C%20description_fr%2C%20image%2C%20firstdate_begin%2C%20firstdate_end%2C%20lastdate_begin%2C%20lastdate_end%2C%20location_coordinates%2C%20location_name%2C%20location_address%2C%20daterange_fr%2C%20longdescription_fr&limit=-1&refine=updatedat%3A%222025%22&refine=location_city%3A%22Paris%22'
+    );
 
-    public function getDataById(string $eventUid): array {
-
-        // return $this->cache->get('event_'.$eventUid, function (ItemInterface $item) use ($eventUid) {
-        //     $item->expiresAfter(3600); // 1 heure de cache
-
-        //  $response = $this->client->request('GET', 'https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/evenements-publics-openagenda/records?select=uid%2C%20title_fr%2C%20description_fr%2C%20image%2C%20firstdate_begin%2C%20firstdate_end%2C%20lastdate_begin%2C%20lastdate_end%2C%20location_coordinates%2C%20location_name%2C%20location_address%2C%20daterange_fr%2C%20longdescription_fr&limit=-1&refine=updatedat%3A%222024%22&refine=location_city%3A%22Paris%22&' . $eventUid);
-        $response = $this->client->request('GET', "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/evenements-publics-openagenda/records?select=uid%2C%20title_fr%2C%20description_fr%2C%20image%2C%20firstdate_begin%2C%20firstdate_end%2C%20lastdate_begin%2C%20lastdate_end%2C%20location_coordinates%2C%20location_name%2C%20location_address%2C%20daterange_fr%2C%20longdescription_fr&limit=-1&refine=updatedat%3A%222024%22&refine=location_city%3A%22Paris%22&where=uid%3D%22{$eventUid}%22");
-
-        $statusCode = $response->getStatusCode();
-        if ($statusCode !== 200) {
-            return null;
-        }
-
-        $results = $response->toArray();
-
-        foreach ($results['results'] as $result) {
-            if ($result['uid'] === $eventUid) {
-                $imageUrl = !empty($result['image']) ? $result['image'] : '/assets/img/nopicture.jpg';
-                return [
-                    'title' => $result['title_fr'],
-                    'description' => $result['description_fr'],
-                    'image' => $imageUrl,
-                    'address' => $result['location_address'],
-                    'eventUid' => $result['uid'], 
-                    'date' => $result['daterange_fr'], 
-                    'orga' => $result['location_name'], 
-                    'eventUid' => $result['uid'],
-                    'location_coordinates' => [
-                        'long' => $result['location_coordinates']['lon'],
-                        'lat' => $result['location_coordinates']['lat']
-                    ],
-                ];
-
-            }
-        }
+    if ($responsePage->getStatusCode() !== 200) {
         return null;
-    //  }); // Fin du cache
     }
+
+    $resultsPage = $responsePage->toArray();
+    $results = $resultsPage['results'] ?? [];
+
+    foreach ($results as $result) {
+        if ($result['uid'] === $eventUid) {
+            $data = [
+                'title' => $result['title_fr'],
+                'description' => $result['description_fr'],
+                'image' => $result['image'] ?? '/assets/img/nopicture.jpg',
+                'address' => $result['location_address'],
+                'eventUid' => $result['uid'],
+                'date' => $result['daterange_fr'],
+                'orga' => $result['location_name'],
+                'location_coordinates' => [
+                    'long' => $result['location_coordinates']['lon'],
+                    'lat' => $result['location_coordinates']['lat']
+                ],
+                'longdescription' => strip_tags($result['longdescription_fr']),
+                'start' => $result['firstdate_begin'],
+                'end' => $result['firstdate_end'],
+                'last_start' => $result['lastdate_begin'],
+                'last_end' => $result['lastdate_end'],
+                'tags' => [],
+                'categories' => [],
+                'firstCategory' => null
+            ];
+
+            $categories = [
+                "Arts" => ["Comedie", "Atelier", "Sculpture", "Design", "Bijoux", "Ballet", "Chorales", "Comédie Musicale", "Danse", "Littérature", "Orchestres", "Peinture"],
+                "Business" => ["ONG", "Start Ups", "Associations", "Carrières", "Investissement", "Immobilier", "Marketing", "Medias", "Petites entreprises"],
+                "Brunch-apéro" => ["Apéro", "Bière", "Brunch", "Culinaire", "Restaurants", "Spiritueux"],
+                "Communauté" => ["Actions Locales", "Bénévolat", "Cours particuliers", "Histoire", "Langues", "Nationalité", "Parrainages", "Participatif"],
+                "Film-médias" => ["Anime", "Adult", "Ciné-débat", "Comédie", "Comics", "Film", "Gaming"],
+                "Musique" => ["Alternatif", "Blues", "Classique", "Dj/Dance", "Concert", "Electro", "Festival", "Folk", "Hip Hop/Rap", "Jazz", "Jam", "Techno", "Reggae"],
+                "Mode" => ["Accesoires", "Beauté", "Vide-grenier", "Maquillage"],
+                "Sports-Fitness" => ["Arts Martiaux", "Basket", "Cyclisme", "Football", "Golf", "Hockey sur Gazon", "Marche", "Moto", "Tennis", "Yoga"],
+                "Santé" => ["Bien-être", "Hypnose", "Méditation", "Santé mentale", "Spa"],
+            ];
+
+            foreach ($categories as $category => $tags) {
+                foreach ($tags as $tag) {
+                    if (
+                        stripos($result['title_fr'], $tag) !== false ||
+                        stripos($result['description_fr'], $tag) !== false ||
+                        stripos($result['longdescription_fr'], $tag) !== false
+                    ) {
+                        $data['tags'][] = $tag;
+                        $data['categories'][$category] = true;
+                    }
+                }
+            }
+
+            // Nettoyage pour éviter doublons/vides
+            $data['tags'] = array_unique($data['tags']);
+            if (empty($data['categories'])) {
+                $data['firstCategory'] = 'Inclassable';
+            } else {
+                $data['firstCategory'] = array_rand($data['categories']);
+            }
+
+            return $data;
+        }
+    }
+
+    return null;
+}
+
+    // public function getDataById(string $eventUid): array {
+
+    //     // return $this->cache->get('event_'.$eventUid, function (ItemInterface $item) use ($eventUid) {
+    //     //     $item->expiresAfter(3600); // 1 heure de cache
+
+    //     //  $response = $this->client->request('GET', 'https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/evenements-publics-openagenda/records?select=uid%2C%20title_fr%2C%20description_fr%2C%20image%2C%20firstdate_begin%2C%20firstdate_end%2C%20lastdate_begin%2C%20lastdate_end%2C%20location_coordinates%2C%20location_name%2C%20location_address%2C%20daterange_fr%2C%20longdescription_fr&limit=-1&refine=updatedat%3A%222024%22&refine=location_city%3A%22Paris%22&' . $eventUid);
+    //     $response = $this->client->request('GET', "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/evenements-publics-openagenda/records?select=uid%2C%20title_fr%2C%20description_fr%2C%20image%2C%20firstdate_begin%2C%20firstdate_end%2C%20lastdate_begin%2C%20lastdate_end%2C%20location_coordinates%2C%20location_name%2C%20location_address%2C%20daterange_fr%2C%20longdescription_fr&limit=-1&refine=updatedat%3A%222024%22&refine=location_city%3A%22Paris%22&where=uid%3D%22{$eventUid}%22");
+
+    //     $statusCode = $response->getStatusCode();
+    //     if ($statusCode !== 200) {
+    //         return null;
+    //     }
+
+    //     $results = $response->toArray();
+
+    //     foreach ($results['results'] as $result) {
+    //         if ($result['uid'] === $eventUid) {
+    //             $imageUrl = !empty($result['image']) ? $result['image'] : '/assets/img/nopicture.jpg';
+    //             return [
+    //                 'title' => $result['title_fr'],
+    //                 'description' => $result['description_fr'],
+    //                 'image' => $imageUrl,
+    //                 'address' => $result['location_address'],
+    //                 'eventUid' => $result['uid'], 
+    //                 'date' => $result['daterange_fr'], 
+    //                 'orga' => $result['location_name'], 
+    //                 'eventUid' => $result['uid'],
+    //                 'location_coordinates' => [
+    //                     'long' => $result['location_coordinates']['lon'],
+    //                     'lat' => $result['location_coordinates']['lat']
+    //                 ],
+    //             ];
+
+    //         }
+    //     }
+    //     return null;
+    // //  }); // Fin du cache
+    // }
 
     public function getDatas(): array // attention array, pas une response car y'a pas de render
     {

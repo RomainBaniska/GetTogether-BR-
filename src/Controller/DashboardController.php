@@ -78,6 +78,7 @@ class DashboardController extends AbstractController
                 'title' => $apiData['title'],
                 'start' => (new \DateTime($apiData['start']))->format('Y-m-d'),
                 'end' => (new \DateTime($apiData['end']))->format('Y-m-d'),
+                'id' => $apiData['eventId'],
             ];
             $calendarEvents[] = $calendarEvent;
         }
@@ -175,8 +176,8 @@ class DashboardController extends AbstractController
             $calendarEvents[] = $calendarEvent;
         }
     
-        dump($calendarEvents);
-        dump($calendarEvent);
+        // dump($calendarEvents);
+        // dump($calendarEvent);
 
         $datas = json_encode($calendarEvents);
         dump($datas);

@@ -85,7 +85,7 @@
 				</div>
 			</div>
 
-			<div class="wholescreen">
+			{# <div class="wholescreen">
 				<h2>
 					<span>Tags</span>
 				</h2>
@@ -108,7 +108,34 @@
 							<p href="#">Cinéma</p>
 						</div>
 					</div>
+				</div> #}
+
+				<div class="wholescreen">
+				<h2>
+					<span>Tags</span>
+				</h2>
+				<div class="columnleft">
+					<div class="tags text-center">
+						{% if event.tags is not empty %}
+							<div>
+								{% for tag in event.tags|slice(0, (event.tags|length / 2)|round(0, 'floor')) %}
+									<p>{{ tag }}</p>
+								{% endfor %}
+							</div>
+							<div>
+								{% for tag in event.tags|slice((event.tags|length / 2)|round(0, 'floor')) %}
+									<p>{{ tag }}</p>
+								{% endfor %}
+							</div>
+						{% else %}
+							<div>
+								<p>Aucun tag détecté</p>
+							</div>
+						{% endif %}
+					</div>
 				</div>
+			</div>
+
 
 				<div class="wholescreen">
 					<h2>

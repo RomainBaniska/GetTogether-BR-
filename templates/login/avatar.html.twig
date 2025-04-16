@@ -39,11 +39,11 @@
 							<div class="subform" action="#" method="post">
 
 								<div class="inputsub">
-									{% for flashMessage in app.flashes('success') %}
+									{# {% for flashMessage in app.flashes('success') %}
 										<div class="alert alert-success">
 											{{ flashMessage }}
 										</div>
-									{% endfor %}
+									{% endfor %} #}
 
 									{% for flashMessage in app.flashes('error') %}
 										<div class="alert alert-danger">
@@ -51,10 +51,18 @@
 										</div>
 									{% endfor %}
 									{{ form_start(photoForm) }}
-									{{ form_widget(photoForm) }}
-
+									{# {{ form_widget(photoForm) }} #}
+									<div class="d-flex justify-content-center mb-3">
+    <label for="{{ photoForm.photo.vars.id }}" class="btn btn-primary">
+        Choisir une photo
+    </label>
+    {{ form_widget(photoForm.photo, {
+        'attr': {
+            'class': 'd-none'
+        }
+    }) }}
+</div>
 								</div>
-
 							</div>
 
 						</article>

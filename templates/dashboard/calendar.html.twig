@@ -37,12 +37,14 @@
                         eventColor: '#B60006',
                         eventClick: function(info) {
                                         if (info.event) {
+                                        const eventUid = info.event.id; 
+                                        const eventUrl = '/event/' + eventUid;  
                                           //  alert('Evènement : ' + info.event.title);
                                           //  window.open(info.event.url);
                                            Swal.fire({
                                                 title: info.event.title,
-                                                // text: info.event.start,
-                                                text: info.event.start.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
+                                                html: info.event.start.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + "<br><a href='" + eventUrl + "'>Accéder</a>",
+                                                //html: "<br><a href='" + eventUrl + "'>Accéder</a>",
                                                 icon: "info",
                                                 confirmButtonText: "OK",
                                                 confirmButtonColor: "#B60006"

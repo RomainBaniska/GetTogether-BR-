@@ -1,14 +1,11 @@
-
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello RegistrationController !
-{% endblock %}
+{% block title %}Hello RegistrationController !{% endblock %}
 
 {% block stylesheets %}
 	<link rel="stylesheet" href="/assets/css/17-07-23-style.css">
 	<link rel="stylesheet" href="/assets/css/mathieu.css">
 {% endblock %}
-
 
 {% block body %}
 
@@ -29,31 +26,25 @@
 						</div>
 					</div>
 
-
 					<div class="col-12 col-md-7 inscription">
 						<article class="cardsub">
 							<h1>Parcours de personnalisation</h1>
 							<p>Bienvenue dans votre parcours de personnalisation. Ce parcours n'est pas obligatoire mais vous permettera d'optimiser votre expérience "Get together".</p>
 							<div class="subform">
 								<div class="inputsub">
-									{{ form_start(profilForm) }}
+									{{ form_start(profilForm, {'attr': {'autocomplete': 'off'}}) }}
 									{{ form_errors(profilForm) }}
 									{{ form_end(profilForm) }}
 								</div>
 							</div>
-
 						</article>
 					</div>
 				</div>
 			</div>
-
-
 		</section>
 
 	{% block footer %}{% endblock %}
 
 	</main>
-
-
 
 {% endblock %}

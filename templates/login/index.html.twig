@@ -1,14 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello RegistrationController !
-{% endblock %}
+{% block title %}Hello RegistrationController !{% endblock %}
 
 {% block stylesheets %}
 	<link rel="stylesheet" href="/assets/css/17-07-23-style.css">
 	<link rel="stylesheet" href="/assets/css/mathieu.css">
 {% endblock %}
-
-
 
 {% block body %}
 
@@ -22,24 +19,23 @@
 						<a href="#" class="logo"><img src="/assets/img/logo-gettogether-white.svg" alt=""></a>
 					</div>
 
-
 					<div class="col-12 col-md-7 inscription adjust">
 						<article class="cardsub">
 							<h1>Connexion</h1>
 							<div class="subform">
 								<div class="inputsub">
-									{{ form_start(loginForm) }}
+									{{ form_start(loginForm, {'attr': {'autocomplete': 'off'}}) }}
 									{{ form_errors(loginForm) }}
-									{{ form_row(loginForm.email) }}
-									{{ form_row(loginForm.password) }}
+
+									{{ form_row(loginForm.email, {'attr': {'autocomplete': 'off'}}) }}
+									{{ form_row(loginForm.password, {'attr': {'autocomplete': 'off'}}) }}
 
 									<div class="col-8 row">
-
 										<div class="col-2">
 											{{ form_widget(loginForm.stayConnected) }}
 										</div>
 										<div class="col-10">
-											{{ form_label(loginForm.stayConnected)  }}
+											{{ form_label(loginForm.stayConnected) }}
 										</div>
 									</div>
 
@@ -50,13 +46,9 @@
 					</div>
 				</div>
 			</div>
-
-
 		</section>
 
-	{% block footer %}{% endblock %}
+		{% block footer %}{% endblock %}
 	</main>
-
-
 
 {% endblock %}
